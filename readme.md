@@ -14,3 +14,8 @@ Robot Framework Docker with selenium2library, requests library , Chrome, CHROMED
 ## Browsers
   - Google Chrome
   - Firefox
+
+
+## Usage
+ - Running Docker - The tests directories can be mounted on to docker to run the tests.
+    `docker run -ti -v <Host tests root path>:<path to mount on docker> docker/robot bash`
