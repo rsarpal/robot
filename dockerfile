@@ -1,9 +1,16 @@
-#FROM ubuntu:xenial
 FROM python:3
+RUN python3 -m pip install --upgrade pip
+
+#install robotframework
 RUN python3 -m pip install robotframework
 RUN python3 -m pip install robotframework-selenium2library
 
+#install Robot API Library
+RUN python3 -m pip install requests
+RUN python3 -m pip install robotframework-requests
+
 # We need wget to set up the PPA and xvfb to have a virtual screen and unzip to install the Chromedriver
+# xvfb performs all graphical operations in virtual memory without showing any screen output
 #RUN apt-get install -y wget xvfb unzip
 RUN apt-get update \
  && apt-get upgrade -y \
@@ -12,9 +19,9 @@ RUN apt-get update \
 #RUN sudo apt-get install -y  xvfb
 
 
-# Set up the Chrome 
+# Set up the Chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo  "deb http://dl.google.com/linux/chrome/deb/ stable main"  >> /etc/apt/sources.list.d/google.list 
+RUN echo  "deb http://dl.google.com/linux/chrome/deb/ stable main"  >> /etc/apt/sources.list.d/google.list
 
 # Update the package list and install chrome
 RUN  apt-get update -y
@@ -22,7 +29,7 @@ RUN  apt-get install -y google-chrome-stable
 
 # Set up Chromedriver Environment variables
 #ENV  CHROMEDRIVER_VERSION 2.19
-ENV CHROMEDRIVER_VERSION 79.0.3945.36
+ENV CHROMEDRIVER_VERSION 86.0.4240.22
 ENV  CHROMEDRIVER_DIR /chromedriver
 RUN  mkdir $CHROMEDRIVER_DIR
 
@@ -30,8 +37,6 @@ RUN  mkdir $CHROMEDRIVER_DIR
 RUN  wget -q --continue -P $CHROMEDRIVER_DIR "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
 RUN  unzip $CHROMEDRIVER_DIR/chromedriver* -d $CHROMEDRIVER_DIR
 
-# Put Chromedriver into the PATH
-#ENV PATH $CHROMEDRIVER_DIR:$PATH
 
 #Firefox
 RUN apt-get install -y firefox-esr
@@ -54,5 +59,5 @@ RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geck
   && ln -fs $GECKODRIVER_DIR/geckodriver-$GECKODRIVER_VERSION /usr/bin/geckodriver \
   && ln -fs $GECKODRIVER_DIR/geckodriver-$GECKODRIVER_VERSION /usr/bin/wires
 
-# Put Chromedriver & Geckodriver into the PATH
+# Add Chromedriver & Geckodriver into the PATH
 ENV PATH $CHROMEDRIVER_DIR:$GECKODDRIVER_DIR:$PATH
